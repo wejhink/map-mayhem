@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:map_mayhem/core/services/geojson_service.dart';
+import 'package:map_mayhem/core/services/map_service.dart';
 import 'package:map_mayhem/presentation/themes/app_colors.dart';
 
 /// A widget that displays an interactive map with country boundaries.
@@ -105,18 +106,20 @@ class _InteractiveMapState extends State<InteractiveMap> {
     return FlutterMap(
       mapController: _mapController,
       options: MapOptions(
-        center: _center,
-        zoom: _zoom,
+        initialCenter: _center,
+        initialZoom: _zoom,
         maxZoom: 10,
         minZoom: 1,
-        interactiveFlags: InteractiveFlag.all,
         onTap: _handleMapTap,
+        interactionOptions: InteractionOptions(
+          flags: InteractiveFlag.all,
+        ),
       ),
       children: [
         TileLayer(
-          urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          subdomains: const ['a', 'b', 'c'],
-          userAgentPackageName: 'com.example.map_mayhem',
+          urlTemplate:
+              'https://klokantech.github.io/naturalearthtiles/tiles/natural_earth_2_shaded_relief.raster/{z}/{x}/{y}.png',
+          userAgentPackageName: 'com.jhink.map_mayhem',
         ),
         PolygonLayer(
           polygons: _buildCountryPolygons(),
@@ -180,12 +183,25 @@ class _InteractiveMapState extends State<InteractiveMap> {
       // Create a Flutter Polygon for each polygon in the country
       for (final points in countryPolygons) {
         if (points.isNotEmpty) {
+          // Determine if we should show the label for this country
+          final bool showLabel =
+              id == widget.targetCountryId && (widget.showCorrectCountry || id == widget.highlightedCountryId);
+
           polygons.add(
             Polygon(
               points: points,
               color: fillColor,
               borderColor: borderColor,
               borderStrokeWidth: borderStrokeWidth,
+              // Add label only for the target country when it's selected or revealed
+              label: showLabel ? country.name : null,
+              labelStyle: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 14.0,
+                backgroundColor: Colors.white70,
+              ),
+              labelPlacement: PolygonLabelPlacement.centroid,
             ),
           );
         }

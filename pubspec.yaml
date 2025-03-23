@@ -43,7 +43,7 @@ dependencies:
   # Map Rendering
   flutter_svg: ^2.0.7
   google_maps_flutter: ^2.5.0
-  latlong2: ^0.8.2
+  latlong2: ^0.9.1
 
   # Local Storage
   shared_preferences: ^2.2.1
@@ -58,8 +58,7 @@ dependencies:
 
   # UI
   cupertino_icons: ^1.0.8
-  flutter_map: ^4.0.0
-  geojson: ^1.0.0
+  flutter_map: ^8.1.1
 
 dev_dependencies:
   flutter_test:
