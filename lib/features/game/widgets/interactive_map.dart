@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:map_mayhem/core/services/geojson_service.dart';
-import 'package:map_mayhem/core/services/map_service.dart';
 import 'package:map_mayhem/presentation/themes/app_colors.dart';
 
 /// A widget that displays an interactive map with country boundaries.
@@ -45,7 +44,7 @@ class _InteractiveMapState extends State<InteractiveMap> {
   List<GeoJsonCountry> _countryFeatures = [];
 
   // Default map center and zoom
-  LatLng _center = LatLng(0, 0);
+  LatLng _center = const LatLng(0, 0);
   double _zoom = 2.0;
 
   @override
@@ -111,7 +110,7 @@ class _InteractiveMapState extends State<InteractiveMap> {
         maxZoom: 10,
         minZoom: 1,
         onTap: _handleMapTap,
-        interactionOptions: InteractionOptions(
+        interactionOptions: const InteractionOptions(
           flags: InteractiveFlag.all,
         ),
       ),
