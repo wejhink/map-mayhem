@@ -175,26 +175,31 @@ class _InteractiveMapState extends State<InteractiveMap> {
         borderStrokeWidth = 1.0;
       }
 
-      // Extract points for the polygon
-      final List<LatLng> points = _extractPointsFromCountry(country);
+      // Extract points for all polygons in this country
+      final List<List<LatLng>> countryPolygons = _extractPointsFromCountry(country);
 
-      if (points.isNotEmpty) {
-        polygons.add(
-          Polygon(
-            points: points,
-            color: fillColor,
-            borderColor: borderColor,
-            borderStrokeWidth: borderStrokeWidth,
-          ),
-        );
+      // Create a Flutter Polygon for each polygon in the country
+      for (final points in countryPolygons) {
+        if (points.isNotEmpty) {
+          polygons.add(
+            Polygon(
+              points: points,
+              color: fillColor,
+              borderColor: borderColor,
+              borderStrokeWidth: borderStrokeWidth,
+            ),
+          );
+        }
       }
     }
 
     return polygons;
   }
 
-  List<LatLng> _extractPointsFromCountry(GeoJsonCountry country) {
-    final List<LatLng> points = [];
+  /// Extract points from a country's geometry
+  /// Returns a list of polygon point lists, since a country can have multiple polygons
+  List<List<LatLng>> _extractPointsFromCountry(GeoJsonCountry country) {
+    final List<List<LatLng>> polygons = [];
     final Map<String, dynamic> geometry = country.geometry;
     final String geometryType = geometry['type'] as String;
 
@@ -203,27 +208,39 @@ class _InteractiveMapState extends State<InteractiveMap> {
       // Use the first ring (outer ring) of the polygon
       final List<dynamic> ring = coordinates[0] as List<dynamic>;
 
+      final List<LatLng> points = [];
       for (var point in ring) {
         final List<dynamic> coord = point as List<dynamic>;
         final double lng = coord[0] as double;
         final double lat = coord[1] as double;
         points.add(LatLng(lat, lng));
       }
-    } else if (geometryType == 'MultiPolygon') {
-      final List<dynamic> polygons = geometry['coordinates'] as List<dynamic>;
-      if (polygons.isNotEmpty) {
-        // For simplicity, just use the first polygon in the multipolygon
-        final List<dynamic> ring = polygons[0][0] as List<dynamic>;
 
+      if (points.isNotEmpty) {
+        polygons.add(points);
+      }
+    } else if (geometryType == 'MultiPolygon') {
+      final List<dynamic> multiPolygon = geometry['coordinates'] as List<dynamic>;
+
+      // Process all polygons in the MultiPolygon
+      for (var polygon in multiPolygon) {
+        // Use the first ring (outer ring) of each polygon
+        final List<dynamic> ring = polygon[0] as List<dynamic>;
+
+        final List<LatLng> points = [];
         for (var point in ring) {
           final List<dynamic> coord = point as List<dynamic>;
           final double lng = coord[0] as double;
           final double lat = coord[1] as double;
           points.add(LatLng(lat, lng));
         }
+
+        if (points.isNotEmpty) {
+          polygons.add(points);
+        }
       }
     }
 
-    return points;
+    return polygons;
   }
 }

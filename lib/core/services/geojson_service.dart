@@ -120,6 +120,7 @@ class GeoJsonService {
       return _isPointInPolygon(ring, latitude, longitude);
     } else if (geometryType == 'MultiPolygon') {
       final List<dynamic> polygons = geometry['coordinates'] as List<dynamic>;
+      // Check all polygons in the MultiPolygon
       for (var polygon in polygons) {
         // Use the first ring (outer ring) of each polygon
         final List<dynamic> ring = polygon[0] as List<dynamic>;
