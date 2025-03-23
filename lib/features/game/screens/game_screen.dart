@@ -24,6 +24,8 @@ class _GameScreenState extends State<GameScreen> {
   late Country _currentCountry;
   String? _selectedCountryId;
   bool _isCorrectAnswer = false;
+  bool _showCorrectCountry = false;
+  bool _showIncorrectSelection = false;
 
   // Game stats
   int _score = 0;
@@ -209,7 +211,9 @@ class _GameScreenState extends State<GameScreen> {
                   geoJsonService: _geoJsonService,
                   onCountryTap: _handleCountryTap,
                   highlightedCountryId: _selectedCountryId,
-                  targetCountryId: _isCorrectAnswer ? _currentCountry.id : null,
+                  targetCountryId: _currentCountry.id,
+                  showCorrectCountry: _showCorrectCountry,
+                  showIncorrectSelection: _showIncorrectSelection,
                 ),
               ),
             ),
@@ -268,8 +272,13 @@ class _GameScreenState extends State<GameScreen> {
       // Check if the selected country is the target country
       if (countryId == _currentCountry.id) {
         _isCorrectAnswer = true;
+        _showCorrectCountry = false;
+        _showIncorrectSelection = false;
         _showCorrectAnswer();
       } else {
+        _isCorrectAnswer = false;
+        _showCorrectCountry = true;
+        _showIncorrectSelection = true;
         _showIncorrectAnswer();
       }
     });
@@ -376,6 +385,8 @@ class _GameScreenState extends State<GameScreen> {
       _remaining = _gameCountries.length;
       _selectedCountryId = null;
       _isCorrectAnswer = false;
+      _showCorrectCountry = false;
+      _showIncorrectSelection = false;
 
       if (_gameCountries.isNotEmpty) {
         // Set the next country as the current target

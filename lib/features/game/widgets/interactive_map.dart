@@ -19,6 +19,12 @@ class InteractiveMap extends StatefulWidget {
   /// The currently targeted country ID for the game.
   final String? targetCountryId;
 
+  /// Whether to show the correct country with a circle
+  final bool showCorrectCountry;
+
+  /// Whether to show the incorrect selection with a circle
+  final bool showIncorrectSelection;
+
   /// Creates an interactive map widget.
   const InteractiveMap({
     super.key,
@@ -26,6 +32,8 @@ class InteractiveMap extends StatefulWidget {
     this.onCountryTap,
     this.highlightedCountryId,
     this.targetCountryId,
+    this.showCorrectCountry = false,
+    this.showIncorrectSelection = false,
   });
 
   @override
@@ -144,14 +152,22 @@ class _InteractiveMapState extends State<InteractiveMap> {
 
       if (id == widget.highlightedCountryId) {
         // Highlighted country (user's selection)
-        fillColor = AppColors.accent.withOpacity(0.5);
-        borderColor = AppColors.accent;
-        borderStrokeWidth = 2.0;
-      } else if (id == widget.targetCountryId) {
-        // Target country (only show if it's been correctly identified)
+        if (id == widget.targetCountryId) {
+          // Correct selection
+          fillColor = AppColors.success.withOpacity(0.5);
+          borderColor = AppColors.success;
+          borderStrokeWidth = 3.0;
+        } else {
+          // Incorrect selection
+          fillColor = AppColors.accent.withOpacity(0.5);
+          borderColor = AppColors.accent;
+          borderStrokeWidth = 3.0;
+        }
+      } else if (id == widget.targetCountryId && widget.showCorrectCountry) {
+        // Target country (show when an incorrect selection is made)
         fillColor = AppColors.success.withOpacity(0.5);
         borderColor = AppColors.success;
-        borderStrokeWidth = 2.0;
+        borderStrokeWidth = 4.0;
       } else {
         // Regular country
         fillColor = Colors.grey.withOpacity(0.2);
