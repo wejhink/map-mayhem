@@ -1,6 +1,10 @@
 # Deploying Map Mayhem to Cloudflare Pages
 
-This guide provides step-by-step instructions for deploying the Map Mayhem Flutter web application to Cloudflare Pages, both manually and using the CI/CD pipeline.
+This guide provides step-by-step instructions for deploying the Map Mayhem Flutter web application to Cloudflare Pages using multiple approaches:
+
+1. **GitHub Actions CI/CD** - Automated builds and deployments triggered by code pushes
+2. **Direct Upload** - Build locally and deploy directly using Cloudflare Wrangler CLI
+3. **Manual Upload** - Build locally and upload through the Cloudflare Pages dashboard
 
 ## Prerequisites
 
@@ -9,48 +13,71 @@ This guide provides step-by-step instructions for deploying the Map Mayhem Flutt
 - A [Cloudflare account](https://dash.cloudflare.com/sign-up)
 - A GitHub repository for your project (for CI/CD deployment)
 
-## Manual Deployment
+## Deployment Methods
 
-### 1. Build the Flutter Web Application
+### Method 1: Direct Upload with Wrangler CLI (Recommended)
 
-```bash
-# Ensure you're using the correct Flutter version
-flutter --version
+This method builds your Flutter web app locally and deploys it directly to Cloudflare Pages using the Wrangler CLI. This approach avoids issues with GitHub Actions and Cloudflare's build environment.
 
-# Get dependencies
-flutter pub get
+1. **Run the direct upload script**:
 
-# Build the web application with optimized settings
-flutter build web --release --web-renderer canvaskit \
---dart-define=FLUTTER_WEB_USE_SKIA=true \
---dart-define=FLUTTER_WEB_AUTO_DETECT=false
-```
+   ```bash
+   ./direct_upload_to_cloudflare.sh
+   ```
 
-The built web application will be in the `build/web` directory.
+   This script will:
 
-### 2. Deploy to Cloudflare Pages
+   - Check for Flutter and Wrangler CLI installation
+   - Build your Flutter web app with optimized settings
+   - Fix any serviceWorkerVersion issues
+   - Deploy directly to Cloudflare Pages
 
-1. Log in to your [Cloudflare Dashboard](https://dash.cloudflare.com/)
-2. Navigate to **Pages** in the sidebar
-3. Click **Create a project**
-4. Choose **Direct Upload** as your deployment method
-5. Drag and drop the contents of your `build/web` directory
-6. Click **Deploy site**
+2. **First-time setup**:
+   - You'll be prompted to log in to Cloudflare if not already authenticated
+   - Enter your Cloudflare Pages project name when prompted
+   - The script will handle the rest of the deployment process
 
-## CI/CD Deployment with GitHub Actions
+### Method 2: Manual Upload via Cloudflare Dashboard
 
-### 1. Set Up Cloudflare Pages Project
+This method involves building the Flutter web app locally and then uploading it through the Cloudflare Pages dashboard.
 
-1. Log in to your [Cloudflare Dashboard](https://dash.cloudflare.com/)
-2. Navigate to **Pages** in the sidebar
-3. Click **Create a project**
-4. Choose **Connect to Git** as your deployment method
-5. Select your GitHub repository
-6. Configure your build settings:
-   - **Framework preset**: None
-   - **Build command**: `flutter build web --release --web-renderer canvaskit --dart-define=FLUTTER_WEB_USE_SKIA=true --dart-define=FLUTTER_WEB_AUTO_DETECT=false`
-   - **Build output directory**: `build/web`
-7. Click **Save and Deploy**
+1. **Build the Flutter Web Application**:
+
+   ```bash
+   # Ensure you're using the correct Flutter version
+   flutter --version
+
+   # Get dependencies
+   flutter pub get
+
+   # Build the web application with optimized settings
+   flutter build web --release --web-renderer canvaskit \
+   --dart-define=FLUTTER_WEB_USE_SKIA=true \
+   --dart-define=FLUTTER_WEB_AUTO_DETECT=false
+   ```
+
+2. **Deploy to Cloudflare Pages**:
+   - Log in to your [Cloudflare Dashboard](https://dash.cloudflare.com/)
+   - Navigate to **Pages** in the sidebar
+   - Click **Create a project**
+   - Choose **Direct Upload** as your deployment method
+   - Drag and drop the contents of your `build/web` directory
+   - Click **Deploy site**
+
+### Method 3: GitHub Actions CI/CD
+
+This method uses GitHub Actions to automatically build and deploy your Flutter web app to Cloudflare Pages whenever you push to your repository.
+
+> **Note**: If you encounter Flutter version issues with GitHub Actions, consider using Method 1 or 2 instead.
+
+1. **Set Up Cloudflare Pages Project**:
+   - Log in to your [Cloudflare Dashboard](https://dash.cloudflare.com/)
+   - Navigate to **Pages** in the sidebar
+   - Click **Create a project**
+   - Choose **Connect to Git** as your deployment method
+   - Select your GitHub repository
+   - For the build settings, select **None** (we'll use GitHub Actions instead)
+   - Click **Save and Deploy** (the initial deployment will fail, which is expected)
 
 ### 2. Create Cloudflare API Token
 

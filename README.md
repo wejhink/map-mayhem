@@ -98,7 +98,23 @@ flutter run -d chrome
 flutter build web --release --web-renderer canvaskit
 ```
 
-For detailed deployment instructions to Cloudflare Pages, see [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md).
+#### Deployment to Cloudflare Pages
+
+Map Mayhem can be deployed to Cloudflare Pages using multiple methods:
+
+1. **Direct Upload (Recommended)**: Build locally and deploy with one command
+
+   ```bash
+   ./direct_upload_to_cloudflare.sh
+   ```
+
+2. **GitHub Actions**: Automatic deployment on code push
+
+   - Set up once and deployments happen automatically
+
+3. **Manual Upload**: Build locally and upload through the Cloudflare dashboard
+
+For detailed deployment instructions, see [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md).
 
 #### Troubleshooting
 
