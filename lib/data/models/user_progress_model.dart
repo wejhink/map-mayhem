@@ -1,5 +1,3 @@
-import 'package:map_mayhem/data/models/country_model.dart';
-
 /// Model representing a user's learning progress for a specific country.
 class CountryProgress {
   /// The ID of the country this progress is for

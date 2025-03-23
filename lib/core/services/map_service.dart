@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math' as math;
 import 'package:flutter/services.dart';
+import 'package:logger/logger.dart';
 import 'package:map_mayhem/data/models/country_model.dart';
 
 /// Service for handling map-related functionality.
@@ -41,8 +42,9 @@ class MapService {
         _countriesByContinent[country.continent]!.add(country);
       }
     } catch (e) {
-      // In a real app, we would handle this error more gracefully
-      print('Error loading countries: $e');
+      // Log the error using the logger package
+      final logger = Logger();
+      logger.e('Error loading countries: $e');
 
       // For MVP, initialize with empty lists
       _countries = [];

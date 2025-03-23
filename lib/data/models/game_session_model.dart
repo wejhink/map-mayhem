@@ -1,5 +1,3 @@
-import 'package:map_mayhem/data/models/country_model.dart';
-
 /// Represents the result of a single country guess in a game session.
 class GuessResult {
   /// The ID of the country that was the target

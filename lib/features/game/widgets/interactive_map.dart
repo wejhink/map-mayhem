@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:map_mayhem/core/services/geojson_service.dart';
-import 'package:map_mayhem/data/models/country_model.dart';
 import 'package:map_mayhem/presentation/themes/app_colors.dart';
 
 /// A widget that displays an interactive map with country boundaries.
@@ -154,24 +153,24 @@ class _InteractiveMapState extends State<InteractiveMap> {
         // Highlighted country (user's selection)
         if (id == widget.targetCountryId) {
           // Correct selection
-          fillColor = AppColors.success.withOpacity(0.5);
+          fillColor = AppColors.success.withAlpha(128);
           borderColor = AppColors.success;
           borderStrokeWidth = 3.0;
         } else {
           // Incorrect selection
-          fillColor = AppColors.accent.withOpacity(0.5);
+          fillColor = AppColors.accent.withAlpha(128);
           borderColor = AppColors.accent;
           borderStrokeWidth = 3.0;
         }
       } else if (id == widget.targetCountryId && widget.showCorrectCountry) {
         // Target country (show when an incorrect selection is made)
-        fillColor = AppColors.success.withOpacity(0.5);
+        fillColor = AppColors.success.withAlpha(128);
         borderColor = AppColors.success;
         borderStrokeWidth = 4.0;
       } else {
         // Regular country
-        fillColor = Colors.grey.withOpacity(0.2);
-        borderColor = Colors.grey.withOpacity(0.5);
+        fillColor = Colors.grey.withAlpha(51);
+        borderColor = Colors.grey.withAlpha(128);
         borderStrokeWidth = 1.0;
       }
 

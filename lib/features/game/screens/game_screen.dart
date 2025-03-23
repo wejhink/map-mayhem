@@ -23,7 +23,6 @@ class _GameScreenState extends State<GameScreen> {
   // Game state
   late Country _currentCountry;
   String? _selectedCountryId;
-  bool _isCorrectAnswer = false;
   bool _showCorrectCountry = false;
   bool _showIncorrectSelection = false;
 
@@ -58,7 +57,7 @@ class _GameScreenState extends State<GameScreen> {
       });
     } else {
       // Fallback if no countries are loaded
-      _currentCountry = Country(
+      _currentCountry = const Country(
         id: 'FRA',
         name: 'France',
         code: 'FR',
@@ -271,12 +270,10 @@ class _GameScreenState extends State<GameScreen> {
 
       // Check if the selected country is the target country
       if (countryId == _currentCountry.id) {
-        _isCorrectAnswer = true;
         _showCorrectCountry = false;
         _showIncorrectSelection = false;
         _showCorrectAnswer();
       } else {
-        _isCorrectAnswer = false;
         _showCorrectCountry = true;
         _showIncorrectSelection = true;
         _showIncorrectAnswer();
@@ -290,18 +287,18 @@ class _GameScreenState extends State<GameScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('How to Play'),
-        content: Column(
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('1. A country name will be displayed at the top'),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text('2. Find and tap on that country on the map'),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text('3. Correct answers earn points and increase your streak'),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text('4. Use hints if you need help finding a country'),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text('5. The app uses spaced repetition to help you learn efficiently'),
           ],
         ),
@@ -384,7 +381,6 @@ class _GameScreenState extends State<GameScreen> {
 
       _remaining = _gameCountries.length;
       _selectedCountryId = null;
-      _isCorrectAnswer = false;
       _showCorrectCountry = false;
       _showIncorrectSelection = false;
 
@@ -431,12 +427,11 @@ class _GameScreenState extends State<GameScreen> {
   void _showIncorrectAnswer() {
     setState(() {
       _streak = 0;
-      _isCorrectAnswer = false;
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Row(
+      const SnackBar(
+        content: Row(
           children: [
             Icon(Icons.cancel, color: Colors.white),
             SizedBox(width: 8),
@@ -444,7 +439,7 @@ class _GameScreenState extends State<GameScreen> {
           ],
         ),
         backgroundColor: AppColors.error,
-        duration: const Duration(seconds: 2),
+        duration: Duration(seconds: 2),
       ),
     );
   }

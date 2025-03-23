@@ -47,8 +47,6 @@ class AppTheme {
         secondary: AppColors.accentLight,
         onSecondary: Colors.black,
         surface: const Color(0xFF121212),
-        background: const Color(0xFF121212),
-        onBackground: AppColors.textLight,
         onSurface: AppColors.textLight,
       ),
       appBarTheme: const AppBarTheme(
@@ -69,7 +67,9 @@ class AppTheme {
       textTheme: AppTextStyles.darkTextTheme,
       scaffoldBackgroundColor: const Color(0xFF121212),
       cardColor: const Color(0xFF1E1E1E),
-      dialogBackgroundColor: const Color(0xFF1E1E1E),
+      dialogTheme: const DialogTheme(
+        backgroundColor: Color(0xFF1E1E1E),
+      ),
       dividerColor: Colors.white24,
       iconTheme: const IconThemeData(color: Colors.white),
     );

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:map_mayhem/data/models/country_model.dart';
+import 'package:logger/logger.dart';
 
 /// A class representing a country from GeoJSON data.
 class GeoJsonCountry {
@@ -72,8 +71,9 @@ class GeoJsonService {
         }
       }
     } catch (e) {
-      // In a real app, we would handle this error more gracefully
-      print('Error loading GeoJSON: $e');
+      // Log the error using the logger package
+      final logger = Logger();
+      logger.e('Error loading GeoJSON: $e');
 
       // Initialize with empty data
       _countriesById = {};
