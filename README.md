@@ -32,6 +32,8 @@
 - Anyone preparing for geography-related exams or competitions
 - Users seeking a mobile, on-the-go learning tool using spaced repetition techniques
 
+For detailed analysis of our target audience and their expectations, see [TARGET_AUDIENCE.md](docs/TARGET_AUDIENCE.md).
+
 ---
 
 ## 🚀 Installation
