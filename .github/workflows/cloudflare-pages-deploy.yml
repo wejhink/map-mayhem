@@ -1,0 +1,79 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [main] # Adjust this to your primary branch name
+  pull_request:
+    branches: [main] # For PR previews
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  build_and_deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch all history for proper versioning
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.5.3" # Match your SDK version from pubspec.yaml
+          channel: "stable"
+          cache: true
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ env.PUB_CACHE }}
+            .dart_tool
+          key: ${{ runner.os }}-flutter-${{ hashFiles('pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze project
+        run: flutter analyze --no-fatal-infos
+
+      - name: Build web
+        run: |
+          # Build Flutter web app with optimized settings
+          flutter build web --release --web-renderer canvaskit \
+          --dart-define=FLUTTER_WEB_USE_SKIA=true \
+          --dart-define=FLUTTER_WEB_AUTO_DETECT=false
+
+          # Ensure serviceWorkerVersion is properly set in the generated files
+          echo "Verifying web build output..."
+          if ! grep -q "serviceWorkerVersion" build/web/flutter_service_worker.js 2>/dev/null; then
+            echo "Warning: serviceWorkerVersion not found in service worker, applying fix..."
+            # Create a simple version if it doesn't exist
+            TIMESTAMP=$(date +%s)
+            echo "const serviceWorkerVersion = '$TIMESTAMP';" > build/web/version.js
+            # Update index.html to include the version file
+            sed -i.bak 's/<script src="flutter_bootstrap.js"/<script src="version.js"><\/script><script src="flutter_bootstrap.js"/' build/web/index.html
+            rm build/web/index.html.bak
+          fi
+
+      # Optional: Optimize built assets
+      - name: Optimize assets
+        run: |
+          cd build/web
+          find . -type f -name "*.html" -o -name "*.css" -o -name "*.js" | xargs gzip -9 -k
+
+      # Deploy to Cloudflare Pages
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: map-mayhem # Your Cloudflare Pages project name
+          directory: build/web
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          # Optional: Use a custom branch name other than the default production/preview
+          branch: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}

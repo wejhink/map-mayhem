@@ -50,12 +50,20 @@
 2. Install the application following on-screen instructions
 3. Launch the app and start learning!
 
+#### Web Version
+
+Try Map Mayhem directly in your browser:
+
+1. Visit our [web application](#) _(Coming Soon)_
+2. No installation required - works on desktop and mobile browsers
+3. Start learning geography instantly!
+
 ### Developers
 
 #### Prerequisites
 
-- [Flutter SDK](https://flutter.dev/docs/get-started/install) (2.10 or higher)
-- [Dart](https://dart.dev/get-dart) (2.16 or higher)
+- [Flutter SDK](https://flutter.dev/docs/get-started/install) (3.5.3 or higher)
+- [Dart](https://dart.dev/get-dart) (3.0.0 or higher)
 - [Git](https://git-scm.com/downloads)
 - Android Studio or VS Code with Flutter extensions
 
@@ -74,6 +82,23 @@ flutter pub get
 # Run the app in development mode
 flutter run
 ```
+
+#### Web Development
+
+To run the web version locally:
+
+```bash
+# Get dependencies
+flutter pub get
+
+# Run in web development mode
+flutter run -d chrome
+
+# Build for production
+flutter build web --release --web-renderer canvaskit
+```
+
+For detailed deployment instructions to Cloudflare Pages, see [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md).
 
 #### Troubleshooting
 

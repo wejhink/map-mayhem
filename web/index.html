@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <!--
+  <head>
+    <!--
     If you are serving your web app in a path other than the root, change the
     href value below to reflect the base path you are serving from.
 
@@ -14,25 +14,172 @@
     This is a placeholder for base href that will be replaced by the value of
     the `--base-href` argument provided to `flutter build`.
   -->
-  <base href="$FLUTTER_BASE_HREF">
+    <base href="$FLUTTER_BASE_HREF" />
 
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+    <meta charset="UTF-8" />
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
+    <meta
+      name="description"
+      content="An interactive geography learning game using spaced repetition to master world map locations."
+    />
 
-  <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="map_mayhem">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+    <!-- iOS meta tags & icons -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="map_mayhem" />
+    <link rel="apple-touch-icon" href="icons/Icon-192.png" />
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png" />
 
-  <title>map_mayhem</title>
-  <link rel="manifest" href="manifest.json">
-</head>
-<body>
-  <script src="flutter_bootstrap.js" async></script>
-</body>
+    <title>Map Mayhem</title>
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- Optimize Flutter web loading -->
+    <style>
+      body {
+        background-color: #121212;
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        position: fixed;
+      }
+
+      .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 999;
+        background-color: #121212;
+        transition: opacity 0.4s ease-out;
+      }
+
+      .loader {
+        border: 8px solid #f3f3f3;
+        border-top: 8px solid #02569b; /* Flutter blue */
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        animation: spin 1.5s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .app-title {
+        color: white;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 24px;
+        margin-top: 24px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading indicator that will be hidden once Flutter loads -->
+    <div id="loading" class="loading">
+      <div style="text-align: center">
+        <div class="loader"></div>
+        <div class="app-title">Map Mayhem</div>
+      </div>
+    </div>
+
+    <!-- Flutter initialization -->
+    <script>
+      // Define serviceWorkerVersion with a fallback
+      var serviceWorkerVersion =
+        typeof serviceWorkerVersion !== "undefined"
+          ? serviceWorkerVersion
+          : null;
+
+      window.addEventListener("load", function () {
+        // Make sure _flutter is defined
+        if (typeof _flutter === "undefined") {
+          console.error(
+            "Flutter initialization failed: _flutter is not defined"
+          );
+          return;
+        }
+
+        // Download main.dart.js
+        _flutter.loader.loadEntrypoint({
+          serviceWorker: {
+            serviceWorkerVersion: serviceWorkerVersion,
+          },
+          onEntrypointLoaded: function (engineInitializer) {
+            engineInitializer.initializeEngine().then(function (appRunner) {
+              // Hide the loading indicator when the app is ready
+              appRunner.runApp();
+              setTimeout(function () {
+                document.getElementById("loading").style.opacity = "0";
+                setTimeout(function () {
+                  document.getElementById("loading").style.display = "none";
+                }, 400);
+              }, 300);
+            });
+          },
+        });
+      });
+    </script>
+    <!-- Load Flutter -->
+    <script
+      src="flutter_bootstrap.js"
+      async
+      onerror="handleBootstrapError()"
+    ></script>
+
+    <!-- Fallback for Flutter bootstrap loading -->
+    <script>
+      // Fallback if flutter_bootstrap.js fails to load
+      function handleBootstrapError() {
+        console.warn(
+          "Flutter bootstrap script failed to load, attempting fallback initialization"
+        );
+
+        // Add main.dart.js script directly as fallback
+        var scriptTag = document.createElement("script");
+        scriptTag.src = "main.dart.js";
+        scriptTag.type = "application/javascript";
+        document.body.appendChild(scriptTag);
+
+        // Hide loading indicator after a timeout if it's still visible
+        setTimeout(function () {
+          var loadingElement = document.getElementById("loading");
+          if (loadingElement && loadingElement.style.opacity !== "0") {
+            loadingElement.style.opacity = "0";
+            setTimeout(function () {
+              loadingElement.style.display = "none";
+            }, 400);
+          }
+        }, 10000); // 10 second fallback timeout
+      }
+
+      // Set a timeout to ensure loading indicator disappears even if everything fails
+      setTimeout(function () {
+        var loadingElement = document.getElementById("loading");
+        if (loadingElement && loadingElement.style.opacity !== "0") {
+          console.warn(
+            "Flutter initialization timed out, hiding loading indicator"
+          );
+          loadingElement.style.opacity = "0";
+          setTimeout(function () {
+            loadingElement.style.display = "none";
+          }, 400);
+        }
+      }, 20000); // 20 second maximum timeout
+    </script>
+  </body>
 </html>

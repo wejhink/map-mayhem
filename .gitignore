@@ -10,6 +10,9 @@
 .svn/
 migrate_working_dir/
 
+# Cloudflare Pages
+.cloudflare/
+
 # IntelliJ related
 *.iml
 *.ipr
@@ -30,6 +33,11 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+
+# Web specific
+/web/flutter_service_worker.js
+/web/flutter.js
+/web/flutter_bootstrap.js
 
 # Symbolication related
 app.*.symbols
