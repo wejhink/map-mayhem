@@ -92,7 +92,7 @@ class _GameScreenState extends State<GameScreen> {
           // Game stats bar
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            color: Colors.grey[200],
+            color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.grey[200],
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -100,19 +100,22 @@ class _GameScreenState extends State<GameScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Score',
                       style: TextStyle(
                         fontSize: 12,
-                        color: AppColors.textSecondary,
+                        color:
+                            Theme.of(context).brightness == Brightness.dark ? Colors.white70 : AppColors.textSecondary,
                       ),
                     ),
                     Text(
                       '$_score',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? AppColors.primaryLight
+                            : AppColors.primary,
                       ),
                     ),
                   ],
@@ -121,19 +124,21 @@ class _GameScreenState extends State<GameScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       'Streak',
                       style: TextStyle(
                         fontSize: 12,
-                        color: AppColors.textSecondary,
+                        color:
+                            Theme.of(context).brightness == Brightness.dark ? Colors.white70 : AppColors.textSecondary,
                       ),
                     ),
                     Text(
                       '$_streak',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.accent,
+                        color:
+                            Theme.of(context).brightness == Brightness.dark ? AppColors.accentLight : AppColors.accent,
                       ),
                     ),
                   ],
@@ -142,18 +147,20 @@ class _GameScreenState extends State<GameScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    const Text(
+                    Text(
                       'Remaining',
                       style: TextStyle(
                         fontSize: 12,
-                        color: AppColors.textSecondary,
+                        color:
+                            Theme.of(context).brightness == Brightness.dark ? Colors.white70 : AppColors.textSecondary,
                       ),
                     ),
                     Text(
                       '$_remaining',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
                       ),
                     ),
                   ],
@@ -167,17 +174,19 @@ class _GameScreenState extends State<GameScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                const Text(
+                Text(
                   'Find this country:',
                   style: TextStyle(
                     fontSize: 16,
-                    color: AppColors.textSecondary,
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : AppColors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   _currentCountry.name,
-                  style: AppTextStyles.countryName,
+                  style: Theme.of(context).brightness == Brightness.dark
+                      ? AppTextStyles.countryNameDark
+                      : AppTextStyles.countryName,
                 ),
               ],
             ),
@@ -188,9 +197,11 @@ class _GameScreenState extends State<GameScreen> {
             child: Container(
               margin: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2C2C2C) : Colors.grey[300],
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[400]!),
+                border: Border.all(
+                  color: Theme.of(context).brightness == Brightness.dark ? Colors.grey[700]! : Colors.grey[400]!,
+                ),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
@@ -270,18 +281,18 @@ class _GameScreenState extends State<GameScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('How to Play'),
-        content: const Column(
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('1. A country name will be displayed at the top'),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text('2. Find and tap on that country on the map'),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text('3. Correct answers earn points and increase your streak'),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text('4. Use hints if you need help finding a country'),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text('5. The app uses spaced repetition to help you learn efficiently'),
           ],
         ),
