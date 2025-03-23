@@ -50,7 +50,7 @@ This document outlines the development roadmap for the Map Mayhem MVP, organized
 
 ## 4. Game Mechanics Implementation
 
-- 4.1. Develop core gameplay loop
+- 4.1. Develop core gameplay loop ✅
   - 4.1.1. Country selection algorithm
   - 4.1.2. User input handling
   - 4.1.3. Answer validation
