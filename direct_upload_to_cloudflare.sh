@@ -44,9 +44,7 @@ flutter pub get
 
 # Build web app
 echo -e "${GREEN}Building Flutter web app...${NC}"
-flutter build web --release --web-renderer canvaskit \
---dart-define=FLUTTER_WEB_USE_SKIA=true \
---dart-define=FLUTTER_WEB_AUTO_DETECT=false
+flutter build web --release --dart-define=FLUTTER_WEB_RENDERER=canvaskit
 
 # Check for serviceWorkerVersion issue and fix if needed
 echo -e "${GREEN}Checking for serviceWorkerVersion issue...${NC}"

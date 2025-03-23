@@ -51,9 +51,7 @@ This method involves building the Flutter web app locally and then uploading it 
    flutter pub get
 
    # Build the web application with optimized settings
-   flutter build web --release --web-renderer canvaskit \
-   --dart-define=FLUTTER_WEB_USE_SKIA=true \
-   --dart-define=FLUTTER_WEB_AUTO_DETECT=false
+   flutter build web --release --dart-define=FLUTTER_WEB_RENDERER=canvaskit
    ```
 
 2. **Deploy to Cloudflare Pages**:

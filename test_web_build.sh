@@ -12,9 +12,7 @@ flutter pub get
 
 
 echo "🏗️ Building web application..."
-flutter build web --release --web-renderer canvaskit \
---dart-define=FLUTTER_WEB_USE_SKIA=true \
---dart-define=FLUTTER_WEB_AUTO_DETECT=false
+flutter build web --release --dart-define=FLUTTER_WEB_RENDERER=canvaskit
 
 echo "✅ Build completed successfully!"
 echo "📁 Web build output is in: $(pwd)/build/web"
