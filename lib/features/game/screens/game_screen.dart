@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:map_mayhem/core/services/audio_service.dart';
 import 'package:map_mayhem/core/services/geojson_service.dart';
 import 'package:map_mayhem/core/services/map_service.dart';
 import 'package:map_mayhem/data/models/country_model.dart';
@@ -19,6 +21,7 @@ class _GameScreenState extends State<GameScreen> {
   // Services
   late MapService _mapService;
   late GeoJsonService _geoJsonService;
+  late AudioService _audioService;
 
   // Game state
   late Country _currentCountry;
@@ -41,6 +44,20 @@ class _GameScreenState extends State<GameScreen> {
     // Get services from provider
     _mapService = Provider.of<MapService>(context, listen: false);
     _geoJsonService = Provider.of<GeoJsonService>(context, listen: false);
+    _audioService = Provider.of<AudioService>(context, listen: false);
+
+    // Start game music
+    _audioService.playGameMusic();
+
+    // For web platforms, retry playing music after a short delay
+    // This helps with autoplay restrictions after user interaction
+    if (kIsWeb) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (_audioService.canPlayAudio) {
+          _audioService.playGameMusic();
+        }
+      });
+    }
 
     _initializeGame();
   }
@@ -71,6 +88,13 @@ class _GameScreenState extends State<GameScreen> {
         flagEmoji: '🇫🇷',
       );
     }
+  }
+
+  @override
+  void dispose() {
+    // Stop game music when leaving the screen
+    _audioService.stopBackgroundMusic();
+    super.dispose();
   }
 
   @override
@@ -227,6 +251,7 @@ class _GameScreenState extends State<GameScreen> {
                 // Skip button
                 OutlinedButton.icon(
                   onPressed: () {
+                    _audioService.playButtonSound();
                     _showSkipDialog();
                   },
                   icon: const Icon(Icons.skip_next),
@@ -242,6 +267,7 @@ class _GameScreenState extends State<GameScreen> {
                 // Hint button
                 ElevatedButton.icon(
                   onPressed: () {
+                    _audioService.playHintSound();
                     _showHint();
                   },
                   icon: const Icon(Icons.lightbulb_outline),
@@ -272,10 +298,12 @@ class _GameScreenState extends State<GameScreen> {
       if (countryId == _currentCountry.id) {
         _showCorrectCountry = false;
         _showIncorrectSelection = false;
+        _audioService.playCorrectSound();
         _showCorrectAnswer();
       } else {
         _showCorrectCountry = true;
         _showIncorrectSelection = true;
+        _audioService.playIncorrectSound();
         _showIncorrectAnswer();
       }
     });
@@ -283,6 +311,7 @@ class _GameScreenState extends State<GameScreen> {
 
   // Show help dialog
   void _showHelpDialog() {
+    _audioService.playButtonSound();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -374,6 +403,9 @@ class _GameScreenState extends State<GameScreen> {
     // Remove the current country from the list
     _gameCountries.removeWhere((country) => country.id == _currentCountry.id);
 
+    // Play next step sound
+    _audioService.playNextStepSound();
+
     setState(() {
       if (skipPenalty) {
         _streak = 0;
@@ -400,6 +432,11 @@ class _GameScreenState extends State<GameScreen> {
     setState(() {
       _score += 10;
       _streak++;
+
+      // Play streak sound if streak is significant
+      if (_streak > 2) {
+        _audioService.playStreakSound();
+      }
     });
 
     ScaffoldMessenger.of(context).showSnackBar(

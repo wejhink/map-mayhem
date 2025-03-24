@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:map_mayhem/app/routes.dart';
+import 'package:map_mayhem/core/services/audio_service.dart';
 import 'package:map_mayhem/presentation/themes/app_colors.dart';
+import 'package:provider/provider.dart';
 
 /// The splash screen displayed when the app is launched.
 class SplashScreen extends StatefulWidget {
@@ -12,9 +15,25 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  late AudioService _audioService;
+
   @override
   void initState() {
     super.initState();
+
+    // Get audio service
+    _audioService = Provider.of<AudioService>(context, listen: false);
+
+    // Play a sound effect when the splash screen appears
+    _audioService.playButtonSound();
+
+    // Show enable audio dialog for web platforms
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (kIsWeb) {
+        AudioService.showEnableAudioDialog(context);
+      }
+    });
+
     // Navigate to dashboard after a delay
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacementNamed(context, AppRouter.dashboardRoute);
@@ -25,6 +44,25 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primary,
+      // Add a floating action button for web platforms to enable audio
+      floatingActionButton: kIsWeb
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                _audioService.userHasInteracted();
+                _audioService.playButtonSound();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Audio enabled!'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.volume_up),
+              label: const Text('Enable Audio'),
+              backgroundColor: Colors.white,
+              foregroundColor: AppColors.primary,
+            )
+          : null,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -1,11 +1,71 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:map_mayhem/app/routes.dart';
+import 'package:map_mayhem/core/services/audio_service.dart';
 import 'package:map_mayhem/presentation/themes/app_colors.dart';
 import 'package:map_mayhem/presentation/themes/app_text_styles.dart';
+import 'package:provider/provider.dart';
 
 /// The main dashboard/home screen of the app.
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  late AudioService _audioService;
+
+  // Flag to track if we're returning to this screen
+  bool _isFirstLoad = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Get audio service
+    _audioService = Provider.of<AudioService>(context, listen: false);
+
+    // Play menu music on first load
+    _playMenuMusic();
+
+    // Mark as first load complete
+    _isFirstLoad = false;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // If this is not the first load (i.e., we're returning to this screen)
+    // then restart the music
+    if (!_isFirstLoad) {
+      _playMenuMusic();
+    }
+  }
+
+  // Helper method to play menu music with web platform handling
+  void _playMenuMusic() {
+    _audioService.playMenuMusic();
+
+    // For web platforms, retry playing music after a short delay
+    // This helps with autoplay restrictions after user interaction
+    if (kIsWeb) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (_audioService.canPlayAudio) {
+          _audioService.playMenuMusic();
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    // Stop menu music when leaving the dashboard
+    _audioService.stopBackgroundMusic();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +76,7 @@ class DashboardScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
+              _audioService.playButtonSound();
               Navigator.pushNamed(context, AppRouter.settingsRoute);
             },
           ),
@@ -56,6 +117,7 @@ class DashboardScreen extends StatelessWidget {
               icon: Icons.school,
               color: AppColors.primary,
               onTap: () {
+                _audioService.playButtonSound();
                 Navigator.pushNamed(context, AppRouter.gameRoute);
               },
             ),

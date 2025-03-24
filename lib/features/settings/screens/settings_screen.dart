@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:map_mayhem/core/services/audio_service.dart';
 import 'package:map_mayhem/presentation/themes/app_colors.dart';
+import 'package:provider/provider.dart';
 
 /// The settings screen for the app.
 class SettingsScreen extends StatefulWidget {
@@ -10,11 +12,31 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  // Placeholder settings
+  // Services
+  late AudioService _audioService;
+
+  // Settings
   bool _darkMode = false;
   bool _soundEffects = true;
+  bool _backgroundMusic = true;
   bool _notifications = true;
   String _difficultyLevel = 'Medium';
+  double _musicVolume = 0.5;
+  double _sfxVolume = 0.7;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Get audio service
+    _audioService = Provider.of<AudioService>(context, listen: false);
+
+    // Initialize audio settings from service
+    _soundEffects = _audioService.isSfxEnabled;
+    _backgroundMusic = _audioService.isMusicEnabled;
+    _musicVolume = _audioService.musicVolume;
+    _sfxVolume = _audioService.sfxVolume;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +70,86 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: const Text('Play sounds during gameplay'),
             value: _soundEffects,
             onChanged: (value) {
+              _audioService.playButtonSound();
               setState(() {
                 _soundEffects = value;
+                _audioService.setSfxEnabled(value);
               });
             },
             secondary: const Icon(Icons.volume_up),
           ),
+
+          // Sound effects volume slider
+          if (_soundEffects)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Row(
+                children: [
+                  const Icon(Icons.volume_down, size: 20, color: Colors.grey),
+                  Expanded(
+                    child: Slider(
+                      value: _sfxVolume,
+                      min: 0.0,
+                      max: 1.0,
+                      divisions: 10,
+                      onChanged: (value) {
+                        setState(() {
+                          _sfxVolume = value;
+                          _audioService.setSfxVolume(value);
+                        });
+                      },
+                      onChangeEnd: (value) {
+                        _audioService.playButtonSound();
+                      },
+                    ),
+                  ),
+                  const Icon(Icons.volume_up, size: 20, color: Colors.grey),
+                ],
+              ),
+            ),
+
+          const Divider(),
+
+          // Background music toggle
+          SwitchListTile(
+            title: const Text('Background Music'),
+            subtitle: const Text('Play music in menus and during gameplay'),
+            value: _backgroundMusic,
+            onChanged: (value) {
+              _audioService.playButtonSound();
+              setState(() {
+                _backgroundMusic = value;
+                _audioService.setMusicEnabled(value);
+              });
+            },
+            secondary: const Icon(Icons.music_note),
+          ),
+
+          // Music volume slider
+          if (_backgroundMusic)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Row(
+                children: [
+                  const Icon(Icons.volume_down, size: 20, color: Colors.grey),
+                  Expanded(
+                    child: Slider(
+                      value: _musicVolume,
+                      min: 0.0,
+                      max: 1.0,
+                      divisions: 10,
+                      onChanged: (value) {
+                        setState(() {
+                          _musicVolume = value;
+                          _audioService.setMusicVolume(value);
+                        });
+                      },
+                    ),
+                  ),
+                  const Icon(Icons.volume_up, size: 20, color: Colors.grey),
+                ],
+              ),
+            ),
 
           const Divider(),
 
@@ -80,6 +176,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: const Icon(Icons.tune),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
+              _audioService.playButtonSound();
               _showDifficultyDialog();
             },
           ),
@@ -136,6 +233,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: ElevatedButton.icon(
               onPressed: () {
+                _audioService.playButtonSound();
                 _showFeedbackDialog();
               },
               icon: const Icon(Icons.feedback_outlined),
@@ -202,6 +300,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     return InkWell(
       onTap: () {
+        _audioService.playButtonSound();
         Navigator.pop(context);
         setState(() {
           _difficultyLevel = level;
@@ -275,6 +374,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           ElevatedButton(
             onPressed: () {
+              _audioService.playButtonSound();
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(

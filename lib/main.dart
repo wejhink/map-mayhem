@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:map_mayhem/app/app.dart';
 import 'package:provider/provider.dart';
+import 'package:map_mayhem/core/services/audio_service.dart';
 import 'package:map_mayhem/core/services/geojson_service.dart';
 import 'package:map_mayhem/core/services/map_service.dart';
 import 'package:map_mayhem/core/services/storage_service.dart';
@@ -25,12 +26,16 @@ void main() async {
   final geoJsonService = GeoJsonService();
   await geoJsonService.init();
 
+  final audioService = AudioService();
+  await audioService.init();
+
   runApp(
     MultiProvider(
       providers: [
         Provider<StorageService>.value(value: storageService),
         Provider<MapService>.value(value: mapService),
         Provider<GeoJsonService>.value(value: geoJsonService),
+        Provider<AudioService>.value(value: audioService),
         // Add other providers here as needed
       ],
       child: const MapMayhemApp(),
