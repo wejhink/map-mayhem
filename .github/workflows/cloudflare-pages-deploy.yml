@@ -33,12 +33,19 @@ jobs:
           path: |
             ${{ env.PUB_CACHE }}
             .dart_tool
-          key: ${{ runner.os }}-flutter-${{ hashFiles('pubspec.lock') }}
+          # Include both pubspec.yaml and pubspec.lock in the cache key
+          # This ensures cache invalidation when dependencies change
+          key: ${{ runner.os }}-flutter-${{ hashFiles('pubspec.yaml', 'pubspec.lock') }}-${{ github.sha }}
           restore-keys: |
+            ${{ runner.os }}-flutter-${{ hashFiles('pubspec.yaml', 'pubspec.lock') }}-
             ${{ runner.os }}-flutter-
 
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          # Force clean install to avoid plugin registration issues
+          flutter clean
+          rm -f pubspec.lock
+          flutter pub get --verbose
 
       - name: Analyze project
         run: flutter analyze --no-fatal-infos
@@ -46,7 +53,7 @@ jobs:
       - name: Build web
         run: |
           # Build Flutter web app with optimized settings
-          flutter build web --release --dart-define=FLUTTER_WEB_RENDERER=canvaskit
+          flutter build web --release --dart-define=FLUTTER_WEB_RENDERER=canvaskit --verbose
 
           # Ensure serviceWorkerVersion is properly set in the generated files
           echo "Verifying web build output..."
